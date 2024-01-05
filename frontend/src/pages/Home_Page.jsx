@@ -5,9 +5,12 @@ import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import NewCutOff from "../component/NewCutOff";
 import axios from "axios";
+import EditCutOff from "../component/EditCutOff";
 
 const Home_Page = () => {
+  const [id, setID] = useState(0);
   const [modal, setModal] = useState(false);
+  const [editmodal, setEditModal] = useState(false);
   const [company, setCompany] = useState([]);
   const [branch, setBranch] = useState([]);
   const [timekeep, setTimekeep] = useState([]);
@@ -26,10 +29,33 @@ const Home_Page = () => {
     });
   }, []);
 
+  const deleteRecord = (id) => {
+    axios
+      .delete(`http://127.0.0.1:8000/api/timekeep/${id}`)
+      .then((res) => {
+        alert("Timekeep record has been deleted!");
+
+        setTimekeep(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className="h-screen w-screen bg-[#F2ECEC] flex justify-center items-center">
       {modal === true ? (
         <NewCutOff setModal={setModal} setTimekeep={setTimekeep} />
+      ) : (
+        ""
+      )}
+
+      {editmodal === true ? (
+        <EditCutOff
+          setEditModal={setEditModal}
+          setTimekeep={setTimekeep}
+          id={id}
+        />
       ) : (
         ""
       )}
@@ -171,10 +197,9 @@ const Home_Page = () => {
                     <th className="border-[1px] border-gray-600">ACTIONS</th>
                   </tr>
 
-                  {timekeep?.map((data) => {
+                  {timekeep.map((data) => {
                     return (
                       <>
-                        {" "}
                         <tr>
                           <td className="border-[1px] border-gray-600 text-center">
                             {data.date_from} - {data.date_to}
@@ -194,12 +219,23 @@ const Home_Page = () => {
                           <td className="border-[1px] border-gray-600 text-center">
                             <div className="flex w-full justify-center">
                               <div>
-                                <button className="bg-[#2B3043] rounded-full m-1">
+                                <button
+                                  onClick={() => {
+                                    setEditModal(true);
+                                    setID(data.id);
+                                  }}
+                                  className="bg-[#2B3043] rounded-full m-1"
+                                >
                                   <FaEdit className="text-[20px] p-1 text-white" />
                                 </button>
                               </div>
                               <div>
-                                <button className="bg-[#2B3043] rounded-full m-1">
+                                <button
+                                  onClick={() => {
+                                    deleteRecord(data.id);
+                                  }}
+                                  className="bg-[#2B3043] rounded-full m-1"
+                                >
                                   <RiDeleteBin5Fill className="text-[20px] p-1 text-white" />
                                 </button>
                               </div>

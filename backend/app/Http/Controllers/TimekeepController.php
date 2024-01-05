@@ -16,7 +16,6 @@ class TimekeepController extends Controller
     public function index()
     {
         try {
-            $timekeeps = TimekeepModel::all();
 
             $timekeeps = TimekeepModel::with('company', 'branch')
             ->join('company', 'company.id', '=', 'timekeep.company_id')
@@ -61,7 +60,14 @@ class TimekeepController extends Controller
 
            //3. Process the Result
            if ($timekeep){
-            return response()->json($timekeep, 201);
+
+            $timekeeps_all = TimekeepModel::with('company', 'branch')
+            ->join('company', 'company.id', '=', 'timekeep.company_id')
+            ->join('branch', 'branch.id', '=', 'timekeep.branch_id')
+            ->select('timekeep.id', 'company.company_name', 'branch.branch_name', 'timekeep.date_from', 'timekeep.date_to')
+            ->get();
+            
+            return response()->json($timekeeps_all, 201);
            }else{
             return response()->json("Fail to create new timekeep.", 500);
            }
@@ -101,6 +107,23 @@ class TimekeepController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $timekeep = TimekeepModel::find($id);
+
+            if (!$timekeep){
+                return response()->json(['message' => "Record Not Found"], 404);  
+            }else{
+                $timekeep->delete($id);
+
+                $timekeeps_all = TimekeepModel::with('company', 'branch')
+                ->join('company', 'company.id', '=', 'timekeep.company_id')
+                ->join('branch', 'branch.id', '=', 'timekeep.branch_id')
+                ->select('timekeep.id', 'company.company_name', 'branch.branch_name', 'timekeep.date_from', 'timekeep.date_to')
+                ->get();
+                return response()->json($timekeeps_all, 200);
+            }
+        } catch (\Throwable $error) {
+            throw $error;
+        }
     }
 }

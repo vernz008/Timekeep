@@ -32,3 +32,4 @@ Route::post('/branch', [BranchController::class, 'store']);
 
 Route::get('/timekeep', [TimekeepController::class, 'index']);
 Route::post('/timekeep', [TimekeepController::class, 'store']);
+Route::delete('/timekeep/{id}', [TimekeepController::class, 'destroy']);

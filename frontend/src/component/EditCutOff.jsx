@@ -3,8 +3,9 @@ import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
-const NewCutOff = ({ setModal, setTimekeep }) => {
+const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
   const [company, setCompany] = useState([]);
   const [branch, setBranch] = useState([]);
   const [timekeep_inputs, setTimekeep_Inputs] = useState({
@@ -29,21 +30,7 @@ const NewCutOff = ({ setModal, setTimekeep }) => {
   const send = (e) => {
     e.preventDefault();
 
-    axios
-      .post("http://127.0.0.1:8000/api/timekeep", {
-        company_id: timekeep_inputs.company,
-        branch_id: timekeep_inputs.branch,
-        date_from: timekeep_inputs.startDate,
-        date_to: timekeep_inputs.endDate,
-      })
-      .then((res) => {
-        setTimekeep(res.data);
-        setModal(false);
-        alert("New Cut-off has been created!");
-      })
-      .catch((err) => {
-        console.log(err.response.data);
-      });
+    alert(id);
   };
 
   // const handleInputChange = (e) => {
@@ -67,7 +54,7 @@ const NewCutOff = ({ setModal, setTimekeep }) => {
 
           <div className="ml-12 mt-1">
             <button
-              onClick={() => setModal(false)}
+              onClick={() => setEditModal(false)}
               className="font-bold text-white"
             >
               X
@@ -194,4 +181,4 @@ const NewCutOff = ({ setModal, setTimekeep }) => {
   );
 };
 
-export default NewCutOff;
+export default EditCutOff;
