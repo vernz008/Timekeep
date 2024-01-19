@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/company', [CompanyController::class, 'index']);
 Route::post('/company', [CompanyController::class, 'store']);
+Route::put('/company/{id}', [CompanyController::class, 'update']);
 
 
 
@@ -33,3 +34,5 @@ Route::post('/branch', [BranchController::class, 'store']);
 Route::get('/timekeep', [TimekeepController::class, 'index']);
 Route::post('/timekeep', [TimekeepController::class, 'store']);
 Route::delete('/timekeep/{id}', [TimekeepController::class, 'destroy']);
+Route::put('/timekeep/{id}', [TimekeepController::class, 'update']);
+Route::get('/timekeep/{id}', [TimekeepController::class, 'show']);

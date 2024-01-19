@@ -6,8 +6,10 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
+  const navigate = useNavigate();
   const [company, setCompany] = useState([]);
   const [branch, setBranch] = useState([]);
+  const [timekeep, setTimeKeep] = useState([]);
   const [timekeep_inputs, setTimekeep_Inputs] = useState({
     company: "",
     branch: "",
@@ -23,23 +25,41 @@ const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
     axios.get("http://127.0.0.1:8000/api/branch").then((res) => {
       setBranch(res.data);
     });
-  }, []);
 
-  // console.log(timekeep_inputs);
+    axios.get(`http://127.0.0.1:8000/api/timekeep/${id}`).then((res) => {
+      setTimekeep_Inputs({
+        ...timekeep_inputs,
+        company: res.data.company_id,
+        branch: res.data.branch_id,
+        startDate: res.data.date_from,
+        endDate: res.data.date_to,
+      }).catch((error) => {
+        console.log(error);
+      });
+    });
+  }, []);
+  //
+  console.log(timekeep_inputs);
 
   const send = (e) => {
     e.preventDefault();
-
-    alert(id);
+    // alert(id);
+    const tk = id;
+    // cge
+    axios
+      .put(`http://127.0.0.1:8000/api/timekeep/${tk}`, {
+        //
+        company_id: timekeep_inputs.company,
+        branch_id: timekeep_inputs.branch,
+        date_from: timekeep_inputs.startDate,
+        date_to: timekeep_inputs.endDate,
+      })
+      .then((res) => {
+        setTimeKeep(res.data);
+        alert("Timekeep has been updated!");
+        window.location.reload();
+      });
   };
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setTimekeep_Inputs((prevInputs) => ({
-  //     ...prevInputs,
-  //     [name]: value,
-  //   }));
-  // };
 
   return (
     <div className="w-screen h-screen flex justify-center items-center bg-black/50 absolute !top-0 !left-0 z-999">
@@ -73,6 +93,7 @@ const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
               name="company"
               id="company"
               required
+              value={timekeep_inputs.company}
               // onChange={handleInputChange}
               onChange={(e) => {
                 setTimekeep_Inputs({
@@ -81,17 +102,14 @@ const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
                 });
               }}
             >
-              <option value="" selected disabled>
+              <option value="" disabled>
                 Select Company
               </option>
               {company.map((data) => {
                 return (
-                  <>
-                    <option key={data.id} value={data.id}>
-                      {data.company_name}
-                    </option>
-                    ;
-                  </>
+                  <option key={data.id} value={data.id}>
+                    {data.company_name}
+                  </option>
                 );
               })}
             </select>
@@ -104,6 +122,7 @@ const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
               name="branch"
               id="branch"
               required
+              value={timekeep_inputs.branch}
               // onChange={handleInputChange}
               onChange={(e) => {
                 setTimekeep_Inputs({
@@ -117,12 +136,9 @@ const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
               </option>
               {branch.map((data) => {
                 return (
-                  <>
-                    <option key={data.id} value={data.id}>
-                      {data.branch_name}
-                    </option>
-                    ;
-                  </>
+                  <option key={data.id} value={data.id}>
+                    {data.branch_name}
+                  </option>
                 );
               })}
             </select>
@@ -139,6 +155,7 @@ const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
                 name="startDate"
                 id="startDate"
                 required
+                value={timekeep_inputs.startDate}
                 onChange={(e) => {
                   setTimekeep_Inputs({
                     ...timekeep_inputs,
@@ -155,6 +172,7 @@ const EditCutOff = ({ setEditModal, setTimekeep, id }) => {
                 name="endDate"
                 id="endDate"
                 required
+                value={timekeep_inputs.endDate}
                 onChange={(e) => {
                   setTimekeep_Inputs({
                     ...timekeep_inputs,

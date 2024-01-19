@@ -84,7 +84,17 @@ class TimekeepController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $timekeep = TimekeepModel::find($id);
+
+            if ($timekeep){
+                return response()->json($timekeep, 200);
+            }else{
+                return response()->json("No data found!", 404);
+            }
+        } catch (\Throwable $error) {
+            throw $error;
+        }
     }
 
     /**
@@ -96,7 +106,33 @@ class TimekeepController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+             //1. Validate
+             $request->validate([
+                "company_id" => "required|integer",
+                "branch_id" => "required|integer",
+                "date_from" => "required",
+                "date_to" => "required",
+            ]);
+            //2 Find the Timekeep Record
+            $timekeep = TimekeepModel::find($id);
+
+            //3. Update the record
+            if ($timekeep){
+                $timekeep->update([
+                    'company_id' => $request->company_id,
+                    'branch_id' => $request->branch_id,
+                    'date_from' => $request->date_from,
+                    'date_to' => $request->date_to,
+                ]);
+
+                return response()->json($timekeep, 200);
+            }else{
+                return response()->json(['message'=>'Timekeep Not Found'],404);
+            }
+        } catch (\Throwable $error) {
+            throw $error;
+        }
     }
 
     /**

@@ -78,7 +78,28 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            //1. Validate
+            $request->validate([
+                "company_name" => "required",
+            ]);
+
+            //2. Find the record
+            $company = CompanyModel::find($id);
+
+            //3. Update the company
+            if ($company){
+                $company->update([
+                    "company_name"=>request->company_name,
+                ]);
+
+                return response()->json($company, 200);
+            }else{
+                return response()->json("Company not found.",404);
+            }
+        } catch (\Throwable $error) {
+            throw $error;
+        }
     }
 
     /**

@@ -9,6 +9,8 @@ import EditCutOff from "../component/EditCutOff";
 
 const Home_Page = () => {
   const [id, setID] = useState(0);
+  const [companyName, setCompName] = useState("");
+  const [branchName, setBranchName] = useState("");
   const [modal, setModal] = useState(false);
   const [editmodal, setEditModal] = useState(false);
   const [company, setCompany] = useState([]);
